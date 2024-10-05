@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Movie</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 60px; /* Adjust for fixed navbar */
+        }
+        h1 {
+            text-align: center;
+        }
+        .form-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+            margin-top: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            flex: 1;
+            min-width: calc(50% - 20px);
+            box-sizing: border-box;
+        }
+        .form-group.wide {
+            flex: 2;
+            min-width: calc(100% - 20px);
+        }
+        .form-row {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+        }
+        .form-row .form-group {
+            flex: 1;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input, .form-group textarea {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .form-group textarea {
+            resize: vertical;
+            height: 100px;
+        }
+        .form-container button {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: auto;
+            margin-top: 20px;
+        }
+        .form-container .submit-button {
+            background-color: #007bff;
+            color: white;
+            margin-right: 10px;
+        }
+        .form-container .cancel-button {
+            background-color: #6c757d;
+            color: white;
+        }
+        .form-container .button-group {
+            display: flex;
+            justify-content: center;
+        }
+
+        .navbar-wrapper {
+            display: flex;
+            justify-content: center; /* Align navbar to the right */
+            background-color: #333;
+            position: fixed; /* Keep navbar at the top */
+            width: 100%;
+            top: 0;
+            z-index: 1000; /* Ensure it is above other content */
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center; /* Center items vertically */
+            background-color: #333;
+        }
+
+        .navbar a {
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        .navbar a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+    </style>
+</head>
+<body>
+<div class="navbar-wrapper">
+    <div class="navbar">
+        <a href="index.html">Home</a>
+        <a href="add_movie.html">Add Movie</a>
+        <a href="popular_movies.html">Popular Movies</a>
+        <a href="bollywood_movies.html">Bollywood</a>
+        <a href="hollywood_movies.html">Hollywood</a>
+        <a href="southIndian_movies.html">South Indian</a>
+    </div>
+</div>
+
+
+<div class="container">
+    <h1>Add a New Movie</h1>
+    <div id="form-container" class="form-container">
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" id="name" placeholder="Name">
+        </div>
+        <div class="form-group">
+            <label for="rating">Rating</label>
+            <input type="text" id="rating" placeholder="Rating">
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="runTime">Run Time</label>
+                <input type="text" id="runTime" placeholder="Run Time">
+            </div>
+            <div class="form-group">
+                <label for="cast">Cast </label>
+                <input type="text" id="cast" placeholder="Cast (comma-separated)">
+            </div>
+        </div>
+        <div class="form-group wide">
+            <label for="description">Description</label>
+            <textarea id="description" placeholder="Description"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="movieType">Movie Type</label>
+            <input type="text" id="movieType" placeholder="Movie Type">
+        </div>
+        <div class="form-group">
+            <label for="director">Director</label>
+            <input type="text" id="director" placeholder="Director">
+        </div>
+        <div class="form-group">
+            <label for="writer">Writer</label>
+            <input type="text" id="writer" placeholder="Writer">
+        </div>
+        <div class="form-group">
+            <label for="image">Image</label>
+            <input type="file" id="image">
+        </div>
+        <div class="form-group button-group">
+            <button class="submit-button" onclick="addMovie()">Submit</button>
+            <button class="cancel-button" onclick="window.location.href='index.html'">Cancel</button>
+        </div>
+    </div>
+</div>
+<script>
+    function clearForm() {
+        document.getElementById('name').value = '';
+        document.getElementById('rating').value = '';
+        document.getElementById('description').value = '';
+        document.getElementById('cast').value = '';
+        document.getElementById('movieType').value = '';
+        document.getElementById('runTime').value = '';
+        document.getElementById('director').value = '';
+        document.getElementById('writer').value = '';
+        document.getElementById('image').value = '';
+    }
+
+    function addMovie() {
+        const name = document.getElementById('name').value;
+        const rating = document.getElementById('rating').value;
+        const description = document.getElementById('description').value;
+        const cast = document.getElementById('cast').value.split(',');
+        const movieType = document.getElementById('movieType').value;
+        const runTime = document.getElementById('runTime').value;
+        const director = document.getElementById('director').value;
+        const writer = document.getElementById('writer').value;
+        const imageFile = document.getElementById('image').files[0];
+
+        const movieData = {
+            name: name,
+            rating: parseFloat(rating),
+            description: description,
+            cast: cast,
+            movie_type: movieType,
+            runTime: runTime,
+            director: director,
+            writer: writer
+        };
+
+        const formData = new FormData();
+        formData.append('file', imageFile);
+        formData.append('movie', JSON.stringify(movieData));
+
+        fetch('http://localhost:8080/movies/', {
+            method: 'POST',
+            headers: {
+                'authorization': 'Bearer your-token-here' // Replace with your token
+            },
+            body: formData
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert('Movie added successfully!');
+                    clearForm();
+                    window.location.href = 'index.html'; // Redirect to the movie list page
+                } else {
+                    alert('Failed to add movie.');
+                }
+            })
+            .catch(error => {
+                console.error('Error adding movie:', error);
+                alert('Failed to add movie.');
+            });
+    }
+</script>
+</body>
+</html>

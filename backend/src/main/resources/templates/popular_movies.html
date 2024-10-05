@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Popular Movies</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        .movies-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .movie-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            width: 200px;
+        }
+        .movie-card img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+        .movie-card-content {
+            padding: 15px;
+        }
+        .movie-card-content h2 {
+            font-size: 18px;
+            margin: 0 0 10px;
+        }
+        .movie-card-content p {
+            margin: 0 0 5px;
+            font-size: 14px;
+            color: #555;
+        }
+        .movie-card-content .cast {
+            font-size: 12px;
+            color: #777;
+        }
+
+        .search-container button {
+            padding: 10px 20px;
+            border: 1px solid #ccc;
+            border-left: none;
+            border-radius: 0 4px 4px 0;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .search-container button:hover {
+            background-color: #0056b3;
+        }
+
+        .navbar-wrapper {
+            display: flex;
+            justify-content: center; /* Align navbar to the right */
+            background-color: #333;
+            position: fixed; /* Keep navbar at the top */
+            width: 100%;
+            top: 0;
+            z-index: 1000; /* Ensure it is above other content */
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center; /* Center items vertically */
+            background-color: #333;
+        }
+
+        .navbar a {
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        .navbar a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+        .search-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        #searchInput {
+            width: 300px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px 0 0 4px;
+            outline: none;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+<div class="navbar-wrapper">
+    <div class="navbar">
+        <a href="index.html">Home</a>
+        <a href="add_movie.html">Add Movie</a>
+        <a href="popular_movies.html">Popular Movies</a>
+        <a href="bollywood_movies.html">Bollywood</a>
+        <a href="hollywood_movies.html">Hollywood</a>
+        <a href="southIndian_movies.html">South Indian</a>
+    </div>
+</div>
+
+<div class="container">
+    <h1>Popular Movies</h1>
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Search movies by name...">
+        <button onclick="searchMovies()">Search</button>
+    </div>
+    <div class="movies-list" id="movies-list"></div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        fetchPopularMovies();
+    });
+
+    function fetchPopularMovies() {
+        fetch('http://localhost:8080/movies/popular')
+            .then(response => response.json())
+            .then(data => {
+                if (Array.isArray(data)) {
+                    renderMovies(data);
+                } else {
+                    console.error('Expected an array of movies, but received:', data);
+                }
+            })
+            .catch(error => console.error('Error fetching popular movies:', error));
+    }
+
+    function renderMovies(movies) {
+        const moviesList = document.getElementById('movies-list');
+        moviesList.innerHTML = ''; // Clear existing movies
+
+        if (movies.length === 0) {
+            moviesList.innerHTML = '<p>No popular movies found.</p>';
+            return;
+        }
+
+        movies.forEach(movie => {
+            const movieCard = document.createElement('div');
+            movieCard.className = 'movie-card';
+            movieCard.onclick = () => {
+                window.location.href = `movie.html?movieId=${movie.id}`;
+            };
+
+            const movieImage = document.createElement('img');
+            movieImage.src = movie.image ? 'data:image/jpeg;base64,' + movie.image : 'placeholder.jpg'; // Fallback image if no image provided
+            movieCard.appendChild(movieImage);
+
+            const movieCardContent = document.createElement('div');
+            movieCardContent.className = 'movie-card-content';
+
+            const movieTitle = document.createElement('h2');
+            movieTitle.textContent = movie.name;
+            movieCardContent.appendChild(movieTitle);
+
+            const movieRating = document.createElement('p');
+            movieRating.textContent = `Rating: ${movie.rating}`;
+            movieCardContent.appendChild(movieRating);
+
+            const movieRunTime = document.createElement('p');
+            movieRunTime.textContent = `Run Time: ${movie.runTime}`;
+            movieCardContent.appendChild(movieRunTime);
+
+            const movieCast = document.createElement('p');
+            movieCast.className = 'cast';
+            movieCast.textContent = `Cast: ${movie.cast ? movie.cast.join(', ') : 'N/A'}`;
+            movieCardContent.appendChild(movieCast);
+
+            movieCard.appendChild(movieCardContent);
+            moviesList.appendChild(movieCard);
+        });
+    }
+
+
+    function fetchMoviesByType(type) {
+        fetch(`http://localhost:8080/movies/getMoviesByType?type=${type}`)
+            .then(response => response.json())
+            .then(data => {
+                if (Array.isArray(data)) {
+                    renderMovies(data);
+                } else {
+                    console.error('Expected an array of movies, but received:', data);
+                }
+            })
+            .catch(error => console.error('Error fetching movies by type:', error));
+    }
+
+    function searchMovies() {
+        const searchInput = document.getElementById('searchInput').value.trim();
+        if (!searchInput) {
+            // If search input is empty, fetch popular movies
+            fetchPopularMovies();
+            return;
+        }
+
+        fetch(`http://localhost:8080/movies/search?name=${encodeURIComponent(searchInput)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (Array.isArray(data)) {
+                    renderMovies(data);
+                } else {
+                    console.error('Expected an array of movies, but received:', data);
+                    document.getElementById('movies-list').innerHTML = '<p>Error fetching search results.</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Error searching movies:', error);
+                document.getElementById('movies-list').innerHTML = '<p>Error fetching search results.</p>';
+            });
+    }
+
+</script>
+</body>
+</html>

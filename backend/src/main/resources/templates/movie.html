@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            width: 80%;
+            max-width: 1200px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .movie-details {
+            text-align: center;
+        }
+        .movie-details h2 {
+            margin: 0 0 20px;
+            color: #222;
+            font-size: 2.5rem;
+            font-weight: 600;
+        }
+        .image-container {
+            margin-bottom: 20px;
+        }
+        .image-container img {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .info .section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #fafafa;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+        .info .section:hover {
+            background-color: #f0f0f5;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .info .section .heading {
+            color: #555;
+            font-weight: 600;
+            width: 120px;
+            text-align: right;
+            margin-right: 10px;
+        }
+        .info .section .data {
+            color: #333;
+        }
+        .info .rating .stars {
+            color: #ffb400; /* Gold color for stars */
+        }
+        .runtime-type {
+            margin-top: 20px;
+        }
+        .movie-description {
+            margin-top: 20px;
+            color: #666;
+            font-size: 1.2rem;
+            line-height: 1.6;
+            text-align: left; /* Align description text to the left */
+            max-width: 800px;
+            margin: 20px auto;
+        }
+
+        .navbar-wrapper {
+            display: flex;
+            justify-content: center; /* Align navbar to the right */
+            background-color: #333;
+            position: fixed; /* Keep navbar at the top */
+            width: 100%;
+            top: 0;
+            z-index: 1000; /* Ensure it is above other content */
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center; /* Center items vertically */
+            background-color: #333;
+        }
+
+        .navbar a {
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        .navbar a:hover {
+            background-color: #ddd;
+            color: black;
+        }    .container {
+                 max-width: 1200px;
+                 margin: 80px auto 20px auto; /* Adjusted margin to account for fixed navbar */
+                 padding: 20px;
+                 background-color: #ffffff;
+                 box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                 border-radius: 8px;
+             }
+
+    </style>
+</head>
+<body>
+<div class="navbar-wrapper">
+    <div class="navbar">
+        <a href="index.html">Home</a>
+        <a href="add_movie.html">Add Movie</a>
+        <a href="popular_movies.html">Popular Movies</a>
+        <a href="bollywood_movies.html">Bollywood</a>
+        <a href="hollywood_movies.html">Hollywood</a>
+        <a href="southIndian_movies.html">South Indian</a>
+    </div>
+</div>
+
+<div class="container">
+    <div class="movie-details" id="movie-details">
+        <!-- Title and content will be added here by JavaScript -->
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const movieId = urlParams.get('movieId');
+
+        if (movieId) {
+            fetch(`http://localhost:8080/movies/movieById?movieId=${movieId}`)
+                .then(response => response.json())
+                .then(data => renderMovieDetails(data))
+                .catch(error => console.error('Error fetching movie details:', error));
+        } else {
+            console.error('No movie ID found in URL');
+        }
+    });
+
+    function renderMovieDetails(movie) {
+        const movieDetails = document.getElementById('movie-details');
+
+        // Movie Title
+        const movieTitle = document.createElement('h2');
+        movieTitle.textContent = movie.name;
+        movieDetails.appendChild(movieTitle);
+
+        // Image container
+        const imageContainer = document.createElement('div');
+        imageContainer.className = 'image-container';
+
+        const movieImage = document.createElement('img');
+        if (movie.image) {
+            movieImage.src = 'data:image/jpeg;base64,' + movie.image;
+        } else {
+            movieImage.src = 'placeholder.jpg';
+        }
+        imageContainer.appendChild(movieImage);
+        movieDetails.appendChild(imageContainer);
+
+        // Movie Info
+        const info = document.createElement('div');
+        info.className = 'info';
+
+        const directorSection = document.createElement('div');
+        directorSection.className = 'section';
+        directorSection.innerHTML = `<div class="heading">Director:</div> <div class="data">${movie.director}</div>`;
+        info.appendChild(directorSection);
+
+        const writerSection = document.createElement('div');
+        writerSection.className = 'section';
+        writerSection.innerHTML = `<div class="heading">Writer:</div> <div class="data">${movie.writer}</div>`;
+        info.appendChild(writerSection);
+
+        const movieRating = document.createElement('div');
+        movieRating.className = 'section rating';
+        movieRating.innerHTML = `<div class="heading">Rating:</div> <div class="data">${movie.rating}`;
+        const ratingStars = document.createElement('span');
+        ratingStars.className = 'stars';
+        const fullStars = Math.floor(movie.rating);
+        const halfStar = movie.rating % 1 !== 0;
+        for (let i = 0; i < fullStars; i++) {
+            ratingStars.innerHTML += '★';
+        }
+        if (halfStar) {
+            ratingStars.innerHTML += '☆';
+        }
+        movieRating.appendChild(ratingStars);
+        movieRating.innerHTML += '</div>';
+        info.appendChild(movieRating);
+
+        const movieCast = document.createElement('div');
+        movieCast.className = 'section cast';
+        movieCast.innerHTML = `<div class="heading">Cast:</div> <div class="data">${movie.cast.join(', ')}</div>`;
+        info.appendChild(movieCast);
+
+        const movieRuntimeType = document.createElement('div');
+        movieRuntimeType.className = 'runtime-type';
+
+        const movieRuntime = document.createElement('div');
+        movieRuntime.className = 'section';
+        movieRuntime.innerHTML = `<div class="heading">Runtime:</div> <div class="data">${movie.runtime}</div>`;
+        movieRuntimeType.appendChild(movieRuntime);
+
+        const movieType = document.createElement('div');
+        movieType.className = 'section';
+        movieType.innerHTML = `<div class="heading">Type:</div> <div class="data">${movie.movie_type}</div>`;
+        movieRuntimeType.appendChild(movieType);
+
+        info.appendChild(movieRuntimeType);
+
+        movieDetails.appendChild(info);
+
+        // Movie Description
+        const movieDescription = document.createElement('p');
+        movieDescription.className = 'movie-description';
+        movieDescription.textContent = movie.description;
+        movieDetails.appendChild(movieDescription);
+    }
+</script>
+</body>
+</html>
